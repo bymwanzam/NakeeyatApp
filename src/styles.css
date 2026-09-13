@@ -1,0 +1,1651 @@
+:root {
+  --green-900: #07372b;
+  --green-700: #0d7a5f;
+  --green-500: #16a37c;
+  --green-100: #d9f2e9;
+  --gold-500: #f2a93b;
+  --gold-100: #fdf0d8;
+  --ink: #12233b;
+  --ink-soft: #5a6b80;
+  --paper: #fffdf7;
+  --card: #ffffff;
+  --line: #e6e0d2;
+  --rose: #e4574f;
+  --sky: #3b8fd4;
+  --violet: #7b6bd6;
+
+  --radius: 22px;
+  --shadow: 0 10px 28px rgba(12, 35, 59, 0.1);
+  --shadow-lift: 0 16px 40px rgba(12, 35, 59, 0.16);
+
+  --font-ui: 'Baloo 2', 'Segoe UI', system-ui, sans-serif;
+  --font-ar: 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/*
+ * Three soft colour washes rather than one flat tint: warm enough to feel like
+ * a children's app, but low-saturation so large blocks of Arabic stay
+ * comfortable to read on top of it.
+ */
+body {
+  font-family: var(--font-ui);
+  color: var(--ink);
+  background:
+    radial-gradient(900px 520px at 12% -8%, #d5f0e5 0%, transparent 60%),
+    radial-gradient(820px 480px at 88% 2%, #fdeacb 0%, transparent 62%),
+    radial-gradient(900px 640px at 50% 108%, #e7e1fb 0%, transparent 58%),
+    var(--paper);
+  background-attachment: fixed;
+  overscroll-behavior: none;
+}
+
+html[dir='rtl'] body {
+  font-family: var(--font-ar);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+}
+
+/* ---------- top bar ---------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 4px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: linear-gradient(var(--paper) 70%, transparent);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--green-700);
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(140deg, var(--green-500), var(--green-700));
+  color: #fff;
+  font-family: var(--font-ar);
+  font-size: 22px;
+  line-height: 1;
+  padding-bottom: 2px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  font-weight: 700;
+  font-size: 15px;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.pill:hover {
+  border-color: var(--green-500);
+}
+
+.pill:active {
+  transform: scale(0.95);
+}
+
+.pill.star-count {
+  background: var(--gold-100);
+  border-color: #f0d9a8;
+  color: #8a5d12;
+}
+
+/* ---------- shared ---------- */
+
+.screen {
+  animation: rise 0.3s ease both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.screen-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 20px;
+}
+
+.screen-head h1 {
+  font-size: clamp(24px, 5vw, 34px);
+  margin: 0;
+  line-height: 1.15;
+}
+
+.screen-head p {
+  margin: 2px 0 0;
+  color: var(--ink-soft);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.icon-btn {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 14px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  transition: transform 0.12s ease;
+}
+
+.icon-btn:active {
+  transform: scale(0.92);
+}
+
+html[dir='rtl'] .icon-btn.back-arrow {
+  transform: scaleX(-1);
+}
+
+html[dir='rtl'] .icon-btn.back-arrow:active {
+  transform: scaleX(-1) scale(0.92);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 14px 24px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 17px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  min-height: 52px;
+}
+
+.btn:active {
+  transform: translateY(2px) scale(0.98);
+}
+
+.btn-primary {
+  background: linear-gradient(150deg, var(--green-500), var(--green-700));
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 6px 0 var(--green-900);
+}
+
+.btn-primary:active {
+  box-shadow: 0 2px 0 var(--green-900);
+}
+
+.btn-gold {
+  background: linear-gradient(150deg, #ffc266, var(--gold-500));
+  border-color: transparent;
+  color: #4a2c00;
+  box-shadow: 0 6px 0 #c07d16;
+}
+
+.btn-gold:active {
+  box-shadow: 0 2px 0 #c07d16;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.arabic {
+  font-family: var(--font-ar);
+  direction: rtl;
+  line-height: 1.7;
+}
+
+/* ---------- home ---------- */
+
+.hero {
+  text-align: center;
+  padding: 14px 0 26px;
+}
+
+.hero h1 {
+  font-size: clamp(30px, 7vw, 46px);
+  margin: 0 0 6px;
+  color: var(--green-900);
+}
+
+.hero .bismillah {
+  font-family: var(--font-ar);
+  font-size: clamp(20px, 4.5vw, 27px);
+  color: var(--green-700);
+  margin: 0 0 14px;
+  direction: rtl;
+}
+
+.hero p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.lesson-card {
+  text-align: start;
+  padding: 22px;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 2px solid var(--line);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.lesson-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+}
+
+.lesson-card:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.lesson-card .emoji {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.lesson-card h2 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.lesson-card p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.lesson-card::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: var(--accent, var(--green-500));
+}
+
+.progress-strip {
+  margin-top: 26px;
+  padding: 18px 22px;
+  border-radius: var(--radius);
+  background: var(--card);
+  border: 2px solid var(--line);
+}
+
+.progress-strip h3 {
+  margin: 0 0 12px;
+  font-size: 17px;
+}
+
+.bar {
+  height: 14px;
+  border-radius: 999px;
+  background: var(--green-100);
+  overflow: hidden;
+}
+
+.bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--green-500), var(--gold-500));
+  transition: width 0.5s ease;
+}
+
+.progress-strip footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.link-btn {
+  color: var(--ink-soft);
+  text-decoration: underline;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.link-btn:hover {
+  color: var(--rose);
+}
+
+/* ---------- letter grid ---------- */
+
+.letters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(94px, 1fr));
+  gap: 12px;
+  direction: rtl;
+}
+
+.letter-tile {
+  aspect-ratio: 1;
+  border-radius: 18px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  box-shadow: var(--shadow);
+  transition: transform 0.14s ease, border-color 0.14s ease;
+  position: relative;
+}
+
+.letter-tile:hover {
+  transform: translateY(-3px);
+  border-color: var(--green-500);
+}
+
+.letter-tile:active {
+  transform: scale(0.94);
+}
+
+.letter-tile .glyph {
+  font-family: var(--font-ar);
+  font-size: 40px;
+  line-height: 1.1;
+  color: var(--green-900);
+}
+
+.letter-tile .tile-name {
+  font-family: var(--font-ui);
+  direction: ltr;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.tile-stars {
+  position: absolute;
+  top: 6px;
+  inset-inline-end: 8px;
+  font-size: 11px;
+  letter-spacing: -1px;
+}
+
+/* ---------- tracing ---------- */
+
+.trace-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.trace-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.trace-meta .name-ar {
+  font-family: var(--font-ar);
+  font-size: 30px;
+  color: var(--green-900);
+}
+
+.trace-meta .name-en {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.canvas-stage {
+  position: relative;
+  width: min(440px, 88vw);
+  aspect-ratio: 1;
+  border-radius: 28px;
+  background:
+    linear-gradient(var(--card), var(--card)) padding-box,
+    linear-gradient(150deg, var(--green-500), var(--gold-500)) border-box;
+  border: 4px solid transparent;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* Faint ruled guide, like a writing exercise book. */
+.canvas-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(var(--green-100) 1px, transparent 1px);
+  background-size: 100% 25%;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.canvas-stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.guide-layer {
+  z-index: 1;
+}
+
+.ink-layer {
+  z-index: 2;
+  cursor: crosshair;
+}
+
+.start-dot {
+  position: absolute;
+  z-index: 3;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border-radius: 50%;
+  background: #23c483;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.65;
+  }
+}
+
+.trace-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.feedback {
+  min-height: 78px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.feedback .msg {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.feedback .msg.win {
+  color: var(--green-700);
+}
+
+.feedback .msg.mid {
+  color: var(--gold-500);
+}
+
+.feedback .msg.low {
+  color: var(--rose);
+}
+
+.stars-row {
+  font-size: 34px;
+  letter-spacing: 4px;
+  line-height: 1;
+}
+
+.stars-row .earned {
+  animation: pop 0.4s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.stars-row .earned:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.stars-row .earned:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0) rotate(-45deg);
+  }
+}
+
+.metrics {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+/* ---------- quiz ---------- */
+
+.quiz-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.speaker-btn {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: linear-gradient(150deg, var(--green-500), var(--green-700));
+  color: #fff;
+  font-size: 54px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 10px 0 var(--green-900), var(--shadow);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.speaker-btn:active {
+  transform: translateY(6px);
+  box-shadow: 0 4px 0 var(--green-900);
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: min(440px, 92vw);
+}
+
+.choice {
+  aspect-ratio: 1.45;
+  border-radius: 20px;
+  background: var(--card);
+  border: 3px solid var(--line);
+  font-family: var(--font-ar);
+  font-size: 48px;
+  color: var(--green-900);
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+}
+
+.choice:active {
+  transform: scale(0.95);
+}
+
+.choice.right {
+  border-color: var(--green-500);
+  background: var(--green-100);
+  animation: pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+.choice.wrong {
+  border-color: var(--rose);
+  background: #fdeceb;
+  animation: shake 0.36s ease;
+}
+
+@keyframes shake {
+  25% {
+    transform: translateX(-8px);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+}
+
+.verdict {
+  min-height: 54px;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.verdict.ok {
+  color: var(--green-700);
+}
+
+.verdict.no {
+  color: var(--rose);
+}
+
+/* ---------- forms ---------- */
+
+.forms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.form-card {
+  padding: 20px 14px;
+  border-radius: 20px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.form-card .label {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+
+.form-card .shape {
+  font-family: var(--font-ar);
+  font-size: 62px;
+  line-height: 1.4;
+  color: var(--green-700);
+  direction: rtl;
+}
+
+.note {
+  margin-top: 18px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: var(--gold-100);
+  border: 2px solid #f2e0bb;
+  font-weight: 600;
+  font-size: 15px;
+  color: #6b4a10;
+}
+
+.note.info {
+  background: var(--green-100);
+  border-color: #b9e3d4;
+  color: var(--green-900);
+}
+
+.word-demo {
+  margin-top: 18px;
+  padding: 22px;
+  border-radius: 20px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.word-demo .big-word {
+  font-family: var(--font-ar);
+  font-size: clamp(46px, 11vw, 72px);
+  direction: rtl;
+  color: var(--green-900);
+  line-height: 1.6;
+}
+
+.word-demo .big-word .hl {
+  color: var(--rose);
+}
+
+.word-demo .gloss {
+  color: var(--ink-soft);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* ---------- reading ---------- */
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 10px 17px;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: var(--card);
+  font-weight: 700;
+  font-size: 14.5px;
+  transition: transform 0.12s ease;
+}
+
+.tab:active {
+  transform: scale(0.95);
+}
+
+.tab.on {
+  background: var(--green-700);
+  border-color: var(--green-700);
+  color: #fff;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: 13px;
+}
+
+.read-card {
+  padding: 18px 10px;
+  border-radius: 20px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: transform 0.14s ease, border-color 0.14s ease;
+}
+
+.read-card:hover {
+  border-color: var(--green-500);
+  transform: translateY(-3px);
+}
+
+.read-card:active {
+  transform: scale(0.95);
+}
+
+.read-card .big {
+  font-family: var(--font-ar);
+  font-size: 46px;
+  line-height: 1.7;
+  color: var(--green-900);
+  direction: rtl;
+}
+
+.read-card .translit {
+  font-family: var(--font-ui);
+  direction: ltr;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--green-700);
+}
+
+.read-card .gloss {
+  font-family: var(--font-ui);
+  direction: ltr;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.syllables {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  direction: rtl;
+  margin-top: 10px;
+}
+
+.syllable {
+  padding: 6px 14px;
+  border-radius: 12px;
+  background: var(--green-100);
+  font-family: var(--font-ar);
+  font-size: 28px;
+  line-height: 1.6;
+  color: var(--green-900);
+  transition: transform 0.12s ease;
+}
+
+.syllable:active {
+  transform: scale(0.9);
+}
+
+.syllable.lit {
+  background: var(--gold-500);
+  color: #fff;
+  transform: scale(1.12);
+}
+
+.haraka-demo {
+  font-family: var(--font-ar);
+  font-size: 56px;
+  direction: rtl;
+  color: var(--green-900);
+  line-height: 1.8;
+}
+
+/* ---------- qur'an: surah list ---------- */
+
+.search {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 2px solid var(--line);
+  background: var(--card);
+  font: inherit;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.search:focus {
+  outline: none;
+  border-color: var(--green-500);
+}
+
+.section-title {
+  font-size: 18px;
+  margin: 26px 0 12px;
+}
+
+.surah-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 11px;
+}
+
+.surah-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border-radius: 16px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  box-shadow: var(--shadow);
+  text-align: start;
+  transition: transform 0.13s ease, border-color 0.13s ease;
+}
+
+.surah-card:hover {
+  border-color: var(--green-500);
+  transform: translateY(-2px);
+}
+
+.surah-card:active {
+  transform: scale(0.98);
+}
+
+.surah-num {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--green-100);
+  color: var(--green-900);
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.surah-names {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.surah-ar {
+  font-family: var(--font-ar);
+  font-size: 21px;
+  line-height: 1.5;
+  color: var(--green-900);
+  direction: rtl;
+}
+
+.surah-en {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.surah-meta {
+  flex: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-align: end;
+  line-height: 1.5;
+}
+
+.credits {
+  margin-top: 30px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ---------- qur'an: reader ---------- */
+
+.reader-toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  position: sticky;
+  top: 66px;
+  z-index: 5;
+  padding: 6px 0;
+  background: linear-gradient(var(--paper) 78%, transparent);
+}
+
+.pill.on {
+  background: var(--green-700);
+  border-color: var(--green-700);
+  color: #fff;
+}
+
+.size-pill {
+  gap: 4px;
+}
+
+.size-pill button {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--green-100);
+  color: var(--green-900);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.size-pill button:disabled {
+  opacity: 0.35;
+}
+
+.bismillah-line {
+  font-family: var(--font-ar);
+  direction: rtl;
+  text-align: center;
+  color: var(--green-700);
+  margin: 6px 0 22px;
+  line-height: 2;
+}
+
+.ayah-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ayah {
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  box-shadow: var(--shadow);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.ayah.playing {
+  border-color: var(--green-500);
+  background: #f3fbf8;
+}
+
+.ayah-controls {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 6px;
+}
+
+.ayah-play {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--green-100);
+  color: var(--green-900);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  transition: transform 0.12s ease;
+}
+
+.ayah-play:hover {
+  background: var(--green-500);
+  color: #fff;
+}
+
+.ayah-play:active {
+  transform: scale(0.9);
+}
+
+.ayah-index {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.ayah-text {
+  font-family: var(--font-ar);
+  direction: rtl;
+  text-align: justify;
+  line-height: 2.25;
+  color: var(--ink);
+  margin: 0;
+}
+
+/*
+ * Tajweed spans must stay "empty" boxes: colour only. A single Arabic word can
+ * be split across five of these spans, and browsers only keep letters joined
+ * across an inline boundary while that boundary has no padding, margin, border
+ * or display change. Adding any of those here visibly tears words apart.
+ */
+.tj {
+  cursor: help;
+}
+
+.ayah-end {
+  font-family: var(--font-ar);
+  color: var(--gold-500);
+  padding: 0 4px;
+}
+
+.ayah-translation {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+  direction: ltr;
+  text-align: start;
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+/* ---------- tajweed legend ---------- */
+
+.legend {
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--card);
+  border: 2px solid var(--line);
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+
+.legend-hint {
+  margin: 0 0 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.legend-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+}
+
+.swatch {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  margin-top: 2px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.swatch.big {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  margin: 0 auto 10px;
+}
+
+.legend-how {
+  color: var(--ink-soft);
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+/* ---------- rule sheet ---------- */
+
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(12, 35, 59, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  animation: fade 0.18s ease both;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.sheet {
+  width: min(360px, 100%);
+  background: var(--card);
+  border-radius: 24px;
+  padding: 26px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-lift);
+  animation: rise 0.22s ease both;
+}
+
+.sheet h3 {
+  margin: 0 0 2px;
+  font-size: 22px;
+}
+
+.sheet-ar {
+  font-family: var(--font-ar);
+  direction: rtl;
+  font-size: 22px;
+  margin: 0 0 10px;
+  color: var(--green-900);
+}
+
+.sheet-how {
+  margin: 0 0 18px;
+  color: var(--ink-soft);
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+/* ---------- misc ---------- */
+
+.banner {
+  margin: 0 0 18px;
+  padding: 13px 17px;
+  border-radius: 14px;
+  background: #fff5e6;
+  border: 2px solid #f4dcb4;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b4a10;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.banner strong {
+  display: block;
+}
+
+/* ---------- floating decoration ---------- */
+
+.sky {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.sky-shape {
+  position: absolute;
+  opacity: 0.42;
+  animation: drift 9s ease-in-out infinite;
+}
+
+/*
+ * The home screen's content column is up to 1040px wide. Below that there is no
+ * free margin, and a lantern drifting across a lesson card looks like a bug
+ * rather than decoration — so on narrow screens the edge shapes are dropped.
+ */
+.sky.edges .sky-shape {
+  opacity: 0.34;
+}
+
+@media (max-width: 1180px) {
+  .sky.edges {
+    display: none;
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(6deg);
+  }
+}
+
+/* Content must sit above the decorations. */
+.app,
+.onboard-card {
+  position: relative;
+  z-index: 1;
+}
+
+.bob {
+  animation: bob 2.6s ease-in-out infinite;
+}
+
+.bob.delay {
+  animation-delay: 0.5s;
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+/* ---------- onboarding ---------- */
+
+.onboarding {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px 40px;
+}
+
+.onboard-card {
+  width: min(480px, 100%);
+  background: var(--card);
+  border-radius: 32px;
+  border: 3px solid var(--line);
+  box-shadow: var(--shadow-lift);
+  padding: 34px 26px 22px;
+  text-align: center;
+  animation: rise 0.35s ease both;
+}
+
+.onboard-card h1 {
+  font-size: clamp(25px, 6vw, 33px);
+  margin: 10px 0 6px;
+  color: var(--green-900);
+  line-height: 1.2;
+}
+
+.onboard-card .who {
+  color: var(--gold-500);
+}
+
+.onboard-sub {
+  margin: 0 0 22px;
+  color: var(--ink-soft);
+  font-size: 16.5px;
+  font-weight: 600;
+}
+
+.onboard-mascots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn.big {
+  width: 100%;
+  font-size: 19px;
+  padding: 17px 24px;
+  margin-top: 18px;
+}
+
+.name-input {
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 18px;
+  border: 3px solid var(--line);
+  background: #fbfaf6;
+  font: inherit;
+  font-size: 21px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--green-900);
+  margin-top: 8px;
+}
+
+.name-input:focus {
+  outline: none;
+  border-color: var(--green-500);
+  background: #fff;
+}
+
+.age-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.age-chip {
+  aspect-ratio: 1;
+  border-radius: 18px;
+  border: 3px solid var(--line);
+  background: var(--card);
+  font-size: 23px;
+  font-weight: 800;
+  color: var(--green-900);
+  transition: transform 0.13s ease, background 0.13s ease, border-color 0.13s ease;
+}
+
+.age-chip:hover {
+  border-color: var(--green-500);
+  transform: translateY(-3px);
+}
+
+.age-chip:active {
+  transform: scale(0.9);
+}
+
+.age-chip.on {
+  background: linear-gradient(150deg, var(--green-500), var(--green-700));
+  border-color: transparent;
+  color: #fff;
+  transform: scale(1.06);
+}
+
+.avatar-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.avatar-choice {
+  padding: 18px 10px 14px;
+  border-radius: 24px;
+  border: 3px solid var(--line);
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--green-900);
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+}
+
+.avatar-choice:hover {
+  border-color: var(--green-500);
+  transform: translateY(-4px);
+}
+
+.avatar-choice:active {
+  transform: scale(0.95);
+}
+
+.avatar-choice.on {
+  border-color: var(--green-500);
+  background: var(--green-100);
+}
+
+.onboard-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.dots {
+  display: flex;
+  gap: 7px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--line);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.dot.on {
+  background: var(--green-500);
+  transform: scale(1.25);
+}
+
+.privacy {
+  margin: 16px 0 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #9fb0c2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+/* ---------- personalised home ---------- */
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--green-700);
+  padding: 4px 6px;
+  border-radius: 14px;
+}
+
+.brand-avatar {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--green-100);
+  overflow: hidden;
+}
+
+.brand-text {
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.greeting-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 22px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #ffffff 0%, #f0fbf6 100%);
+  border: 3px solid var(--line);
+  box-shadow: var(--shadow);
+  margin: 6px 0 24px;
+}
+
+.greeting-avatar {
+  flex: none;
+}
+
+.greeting-small {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.greeting-name {
+  margin: 0;
+  font-size: clamp(26px, 6.5vw, 38px);
+  line-height: 1.1;
+  color: var(--green-900);
+}
+
+.greeting-day {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.foot-links {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+/* Lesson cards: bigger, bouncier, colour-led. */
+.lesson-card {
+  animation: rise 0.4s ease both;
+  padding: 24px 22px;
+  border-width: 3px;
+}
+
+.lesson-card .emoji {
+  font-size: 30px;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--accent) 16%, white);
+  margin-bottom: 4px;
+}
+
+.lesson-card::after {
+  width: 8px;
+}
+
+.lesson-card:hover {
+  transform: translateY(-6px) rotate(-0.5deg);
+}
+
+/* ---------- confetti ---------- */
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  overflow: hidden;
+}
+
+.confetti span {
+  position: absolute;
+  top: -22px;
+  width: 11px;
+  height: 14px;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(105vh) rotate(640deg);
+    opacity: 0.15;
+  }
+}
+
+@media (max-width: 480px) {
+  .greeting-card {
+    gap: 12px;
+    padding: 16px;
+  }
+  .age-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .letters {
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+  }
+  .letter-tile .glyph {
+    font-size: 33px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
