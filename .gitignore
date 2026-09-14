@@ -40,3 +40,18 @@ screenshots/
 # Voice-comparison scratch output. The shipped clips in public/audio/ ARE
 # committed — they are the app's audio, not build artifacts.
 audio-samples/
+### Deploy ###
+# The upload bundle, rebuilt by zipping dist/ - not source.
+nakeeyat-upload.zip
+
+# Built APK copied to the project root for convenience.
+*.apk
+
+# The Xcode handoff bundle, rebuilt by archiving the source - not source itself.
+nakeeyat-ios-xcode.zip
+
+### iOS ###
+# Xcode's own build products and per-user state live under ios/, which carries
+# its own .gitignore from the Capacitor template. Only the shipped archive is
+# ignored here, matching the APK rule above.
+*.ipa

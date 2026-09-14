@@ -10,13 +10,23 @@
     "smoke": "node scripts/smoke.mjs",
     "quran:fetch": "node scripts/fetch-quran.mjs",
     "audio:manifest": "node scripts/audio-manifest.mjs",
-    "audio:generate": "node scripts/audio-manifest.mjs && python scripts/generate_audio.py"
+    "audio:generate": "node scripts/audio-manifest.mjs && python scripts/generate_audio.py",
+    "android:apk": "cd android && gradlew.bat assembleDebug",
+    "android:sync": "npm run build && npx cap copy android",
+    "ios:sync": "npm run build && npx cap copy ios",
+    "ios:open": "npx cap open ios",
+    "ios:assets": "node scripts/ios-assets.mjs",
+    "ios:bundle": "npm run ios:sync && node scripts/ios-bundle.mjs"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/ios": "^8.5.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",

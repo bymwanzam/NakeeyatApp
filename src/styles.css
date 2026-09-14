@@ -63,6 +63,22 @@ button {
   color: inherit;
 }
 
+/*
+ * The safe-area padding below is what keeps the iOS build usable.
+ *
+ * index.html asks for `viewport-fit=cover`, so the page is laid out edge to
+ * edge: under the notch or Dynamic Island at the top, under the home indicator
+ * at the bottom, and under the rounded corners in landscape. Nothing reads
+ * those insets on the web, where they are all zero, so they cost the browser
+ * build nothing -- but without them an iPhone puts the child's name behind the
+ * clock and the last row of letters behind the home indicator.
+ *
+ * Each one is written as a plain value first and an inset-aware value second,
+ * so a browser that does not know `env()` drops only the second declaration
+ * and keeps the ordinary padding rather than losing the padding entirely.
+ * The insets are physical (left is the left of the device, not the start of
+ * the text), which is what is wanted: a notch does not move in RTL.
+ */
 .app {
   display: flex;
   flex-direction: column;
@@ -70,6 +86,9 @@ button {
   max-width: 1040px;
   margin: 0 auto;
   padding: 0 16px 40px;
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-bottom: max(40px, calc(env(safe-area-inset-bottom) + 24px));
 }
 
 /* ---------- top bar ---------- */
@@ -79,6 +98,9 @@ button {
   align-items: center;
   gap: 12px;
   padding: 16px 4px;
+  /* Pushes the row clear of the status bar; the sticky gradient behind it then
+     covers that strip instead of leaving the clock over bare content. */
+  padding-top: calc(16px + env(safe-area-inset-top, 0px));
   position: sticky;
   top: 0;
   z-index: 10;
@@ -481,6 +503,13 @@ html[dir='rtl'] .icon-btn.back-arrow:active {
   box-shadow: var(--shadow);
   overflow: hidden;
   touch-action: none;
+  /* A child traces slowly, which iOS reads as a long press and answers with
+     the selection callout in the middle of the stroke. Selection is meaningless
+     over a canvas, so refuse it here only -- the Qur'an text stays selectable,
+     which is how a parent copies an ayah. */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* Faint ruled guide, like a writing exercise book. */
@@ -1320,11 +1349,16 @@ html[dir='rtl'] .icon-btn.back-arrow:active {
 
 /* ---------- onboarding ---------- */
 
+/* The wizard is its own root, outside `.app`, so it needs the insets too. */
 .onboarding {
   min-height: 100%;
   display: grid;
   place-items: center;
   padding: 24px 16px 40px;
+  padding-top: calc(24px + env(safe-area-inset-top, 0px));
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  padding-bottom: max(40px, calc(env(safe-area-inset-bottom) + 24px));
 }
 
 .onboard-card {

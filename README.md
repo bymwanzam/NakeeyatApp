@@ -22,6 +22,189 @@ npm run smoke          # drive the app in a headless browser, screenshots into s
 npm run audio:generate # re-render the spoken clips (needs Python + `pip install edge-tts`)
 ```
 
+## Deploying
+
+### As a web app
+
+`npm run build` produces `dist/`, which is a plain static site — no server code,
+no Node needed at the other end. Upload the *contents* of `dist/` to the web
+root and that is the whole deployment.
+
+`public/.htaccess` is copied into every build and carries the Apache config:
+gzip (Al-Baqarah drops from 290 KB to 32 KB, which is the difference between a
+surah opening instantly and a child giving up), cache headers, and no directory
+listings. It deliberately contains **no rewrite rules** — the app keeps its
+views in React state and has no router, so there are no URLs to rewrite. An SPA
+fallback would turn a genuinely missing surah file into a 200 full of HTML,
+which is far harder to diagnose than a clean 404.
+
+Zipping `dist/` on Windows needs care: .NET's `CreateFromDirectory` writes entry
+names with backslashes, which the ZIP spec forbids and Linux extractors read as
+literal filenames — the whole tree ends up flattened into the web root. Build
+the archive with explicit forward slashes.
+
+### As an Android app
+
+```bash
+npm run build
+npx cap copy          # refresh the bundled web assets
+npm run android:apk   # assemble the debug APK
+```
+
+The APK is written to
+`android/app/build/outputs/apk/debug/app-debug.apk`.
+
+The point of the Android build is offline: the whole of `dist/` is packaged
+inside the APK, so all 114 surahs and all 165 audio clips are local assets.
+The web version can only cache a surah once it has already been opened online,
+so this is the only way the entire Qur'an is readable from a cold start with no
+connection. Only the Husary recitation and the English translation still reach
+the network, and both already fail softly.
+
+`INTERNET` is the only permission the app requests — no camera, location, or
+storage — which is worth keeping true for something children use.
+
+Two toolchain notes, both of which cost an afternoon if you hit them cold:
+
+- **Build with a JDK 21.** Gradle 8.14's Groovy cannot parse JDK 25 class files
+  and fails with `Unsupported class file major version 69`. Confusingly
+  `./gradlew --version` still succeeds on JDK 25, because the failure only
+  happens once it compiles the build scripts.
+- **`android/local.properties` must use forward slashes.** It is a Java
+  `.properties` file, where a backslash is an escape character, so a Windows
+  `C:\Users\...` path is silently mangled into the misleading error
+  `The filename, directory name, or volume label syntax is incorrect`.
+
+### As an iOS app
+
+Building for iOS needs a Mac with Xcode; Apple's toolchain does not run
+anywhere else. Everything up to that point is the same on Windows — the iOS
+project is generated, edited and committed like any other source, and only the
+final compile has to happen on a Mac.
+
+```bash
+npm install
+npm run ios:sync     # build the web app and copy dist/ into the Xcode project
+npm run ios:open     # open ios/App/App.xcodeproj in Xcode
+```
+
+Then pick a team under **Signing & Capabilities** and press Run. The bundle
+identifier is `com.nakeeyat.app`, the same string as the Android `appId`, so
+the two stores hold one app rather than two.
+
+**On a fresh clone, `npm run ios:sync` is not optional.** `ios/App/App/public`
+is where the built web app lives inside the Xcode project, and it is ignored by
+git — as it should be, since it is 3 MB of generated output. Open the project
+without running the sync first and it compiles to a white screen, which looks
+like a bug in the app rather than a missing build step.
+
+The point of the iOS build is the same as the Android one: the whole of `dist/`
+is copied into the app bundle, so all 114 surahs and all 165 audio clips are
+local files. Only the Husary recitation and the English translation still reach
+the network. Both are HTTPS, so App Transport Security is satisfied as it
+stands and `Info.plist` needs no exception. The app asks for no permissions at
+all — no camera, microphone, photos or location — which is why it carries none
+of the usage-description keys.
+
+Four things are worth knowing before the first build:
+
+- **There is no CocoaPods step.** Capacitor 8 wires its native code through
+  Swift Package Manager (`ios/App/CapApp-SPM`), which is why `npx cap add ios`
+  ran on Windows in the first place. Xcode resolves `capacitor-swift-pm` from
+  GitHub on the first build, so that one build needs a connection.
+- **The silent switch would otherwise mute the lessons.** A `WKWebView` plays
+  HTML audio under the *ambient* audio category, which the ring/silent switch
+  silences — a child would trace and tap through a whole lesson in silence with
+  nothing on screen to explain it. `AppDelegate.swift` claims the `.playback`
+  category at launch to prevent that. It deliberately does not *activate* the
+  session there, which would cut off whatever the family was already listening
+  to before the child had touched anything.
+- **The safe-area padding in `styles.css` is load-bearing here.** `index.html`
+  asks for `viewport-fit=cover`, so without it the child's name sits behind the
+  clock and the bottom row of letters behind the home indicator. Those rules
+  cost the web build nothing, because every inset is zero in a browser.
+- **Test tracing on a real device.** The simulator's mouse pointer is as poor a
+  stand-in for a child's finger as it is in the browser.
+
+Deployment target is iOS 15, built for both iPhone and iPad, since a tablet is
+the better surface for tracing.
+
+`ITSAppUsesNonExemptEncryption` is set to `false` in `Info.plist`: the only
+encryption in the app is ordinary HTTPS, which is exempt. Without the key every
+TestFlight and App Store upload halts and asks the export-compliance question
+again before it will process the build.
+
+### Getting it onto an iPhone
+
+`npm run ios:bundle` writes `nakeeyat-ios-xcode.zip` — the whole project with
+the built web app already copied into `ios/App/App/public`. Copy it to the Mac
+and unzip it. **Node is not needed on that Mac** to build what is in the zip:
+the web app is prebuilt, and Capacitor's native code comes from Swift Package
+Manager, which Xcode fetches itself. Node is only needed there if you want to
+change the app and rebuild it on the Mac rather than re-zipping from Windows.
+
+Use the script rather than zipping the folder by hand. PowerShell's
+`Compress-Archive` is .NET's `ZipFile`, which writes entry names with
+backslashes; macOS reads those as literal filenames and the tree arrives
+flattened, the same trap recorded for `dist/` further up. `scripts/ios-bundle.mjs`
+calls Windows' own `System32\tar.exe` by full path -- Git Bash puts GNU tar
+ahead of it on `PATH`, and GNU tar given `-a` and a `.zip` name writes an
+uncompressed *tar* called `.zip` and exits 0 -- then checks that the result
+really does begin `PK`, so a wrong-format archive fails here instead of on the
+Mac.
+
+1. Open `ios/App/App.xcodeproj`.
+2. **Xcode → Settings → Accounts**, add your Apple ID.
+3. Select the **App** target → **Signing & Capabilities** → tick *Automatically
+   manage signing* and pick your team. A plain Apple ID appears as
+   *(Personal Team)* and is enough to get started.
+4. Plug the iPhone in, choose it as the run destination, and press Run. The
+   first build resolves `capacitor-swift-pm` from GitHub, so it needs a
+   connection once.
+5. The first launch on the phone will refuse with an untrusted-developer error.
+   On the iPhone: **Settings → General → VPN & Device Management**, tap your
+   developer certificate, trust it. Then open Nakeeyat.
+
+What a free Apple ID gets you, and where it stops:
+
+- The app installs only onto iPhones connected to that Mac. There is no way to
+  send it to anyone else.
+- It stops launching after **seven days**. Re-running it from Xcode renews it.
+- Three apps at a time per Apple ID.
+
+Sharing it with other people means joining the **Apple Developer Program, $99 a
+year**. That is what unlocks TestFlight, which is the sane way to distribute a
+children's app to families for testing: they install from a link, and each
+build stays valid for 90 days. There is no free route onto someone else's
+iPhone — sideloading services exist, but none of them are appropriate for
+something you intend to hand to other people's children.
+
+Two settings to know before you submit anything to the App Store. `appId` in
+`capacitor.config.ts` is the permanent identity of the app and must match
+`PRODUCT_BUNDLE_IDENTIFIER` in Xcode; and an app aimed at children lands in the
+Kids Category, which is reviewed against stricter rules than an ordinary app —
+no third-party analytics, no behavioural advertising, and parental gates in
+front of anything that leaves the app. Nakeeyat already collects nothing and
+sends nothing, so this costs nothing to comply with, but it is worth not
+breaking later.
+
+### The icons
+
+The Android launcher icon is generated from the same dome drawn in
+`src/components/Mascot.tsx`, so the home screen matches the app it opens.
+
+```bash
+npm run ios:assets    # rewrite the iOS app icon and launch image
+```
+
+`scripts/ios-assets.mjs` redraws that same artwork for iOS and rasterises it
+with the copy of headless Chromium that Playwright already installs for the
+smoke test, so there is no image toolchain to set up. It writes the PNGs by
+hand rather than using `screenshot()` for one reason: an iOS app icon may not
+carry an alpha channel, App Store Connect rejects one that does, and every easy
+route out of Node — Playwright's screenshot, canvas `toDataURL` — produces
+RGBA. Editing the artwork means editing the SVG at the top of that file.
+
 ## The child's profile
 
 On first run the app asks for a name, an age and a character, one question per

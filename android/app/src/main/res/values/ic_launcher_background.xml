@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand green, sitting between the two greens of the icon gradient. This
+         is what shows behind the transparent adaptive foreground on API 26+;
+         leaving it white put a white ring around the dome. -->
+    <color name="ic_launcher_background">#0E6B53</color>
+</resources>

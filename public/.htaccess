@@ -1,0 +1,80 @@
+# Nakeeyat on Apache / cPanel shared hosting.
+#
+# This lives in public/ rather than dist/ so that `npm run build` copies it into
+# the bundle every time. Editing it in dist/ would work until the next rebuild
+# silently dropped it.
+#
+# There are deliberately NO rewrite rules here. Every Vite-on-cPanel guide tells
+# you to add an SPA fallback that rewrites unknown paths to index.html, but this
+# app keeps its views in React state and has no router, so there are no URLs to
+# fall back for. Adding one would turn a genuinely missing surah file into a
+# 200 response containing HTML, which is harder to diagnose than a plain 404.
+
+# --- Compression ------------------------------------------------------------
+# The single biggest win available here. The Qur'an ships as ~3 MB of JSON and
+# it is nearly all repeated markup, so it compresses about 9:1 -- Al-Baqarah
+# alone drops from 290 KB to 32 KB. Without this, opening a long surah on a
+# phone connection is slow enough that a child gives up waiting.
+#
+# MP3s are deliberately absent from this list: they are already compressed, so
+# re-compressing them burns server CPU to save nothing.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# --- Caching ----------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # index.html must NOT be cached hard. It is the file that names the current
+  # hashed bundle, so caching it means a redeploy never reaches anyone who has
+  # already visited.
+  ExpiresByType text/html "access plus 0 seconds"
+
+  # Vite fingerprints the bundle filenames, and the audio clips are named after
+  # a hash of the Arabic text they speak. In both cases the name changes when
+  # the content does, so these can be cached hard and forever.
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType audio/mpeg "access plus 1 year"
+
+  # surah-N.json is NOT content-hashed, so it gets a finite lifetime. The text
+  # is 1400 years old and is not going to change, but a month means a corrected
+  # download still reaches devices without waiting a year.
+  ExpiresByType application/json "access plus 1 month"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|mp3)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+# --- MIME types -------------------------------------------------------------
+# Nearly always already set server-wide; declared here so the app does not
+# depend on a particular host's configuration.
+<IfModule mod_mime.c>
+  AddType application/json .json
+  AddType audio/mpeg .mp3
+</IfModule>
+
+# --- Tidiness ---------------------------------------------------------------
+# Without this, /audio/ and /quran/ serve a browsable index of all 279 files.
+Options -Indexes
+
+# --- HTTPS ------------------------------------------------------------------
+# Left commented ON PURPOSE. Turn it on only AFTER cPanel's AutoSSL has issued
+# a certificate for this subdomain (cPanel > SSL/TLS Status). Enabling it first
+# redirects visitors to a URL that does not yet serve, taking the site down.
+#
+# <IfModule mod_rewrite.c>
+#   RewriteEngine On
+#   RewriteCond %{HTTPS} off
+#   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>
